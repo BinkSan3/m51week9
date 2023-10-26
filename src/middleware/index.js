@@ -18,7 +18,7 @@ const hashPass = async (req, res, next) => {
 
 const comparePass = async (req, res, next) => {
   try {
-    req.user = await User.findOne({ where: { userName: req.body.userName } });
+    req.user = await User.findOne({ where: { username: req.body.username } });
     console.log("from compare pass", req.user);
     if (!req.user) {
       res.status(401).json({ message: "Invalid Username" });
@@ -29,7 +29,7 @@ const comparePass = async (req, res, next) => {
       req.user.password
     );
     if (!unhashedPassword) {
-      res.send("not authorized");
+      res.status(501).json({ message: "not authorized" });
     }
     next();
 
@@ -56,7 +56,7 @@ const tokenCheck = async (req, res, next) => {
       process.env.SECRET_KEY
     );
     req.user = await User.findOne({ where: { id: decodedToken.id } });
-    req.user = await User.findOne({ where: { id: 1 } });
+    // req.user = await User.findOne({ where: { id: 1 } });
     console.log(req.user);
     console.log("Valid Token");
     next();
