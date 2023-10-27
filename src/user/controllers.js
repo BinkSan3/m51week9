@@ -29,9 +29,6 @@ const findAllUsers = async (req, res) => {
       throw new Error("user is undefined");
     }
 
-    //users has also caused alot of confusion as the default we use in cose alongs would be simply user so I have needed to figure out where to use user as a front end state or when I need users from this backend object so there will be a few instance where things are wrong. Again there are issues where I would know which one to use when coding along.
-    //DONE
-
     const users = await User.findAll();
     if (users.length === 0) {
       res.status(404).json({ message: "failure" });
@@ -39,6 +36,27 @@ const findAllUsers = async (req, res) => {
       return;
     }
     res.status(200).json({ message: "success", users });
+  } catch (error) {
+    res.status(500).json({ message: error.message, error });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    if (!req.user) {
+      throw new Error("user is undefined");
+    }
+    const user = await User.destroy({
+      where: {
+        id: req.body.id,
+      },
+    });
+
+    const successResponse = {
+      message: "success",
+      user,
+    };
+    res.send(successResponse);
   } catch (error) {
     res.status(500).json({ message: error.message, error });
   }
@@ -87,4 +105,4 @@ const loginUser = async (req, res) => {
 //     }
 // }
 
-module.exports = { registerUser, findAllUsers, loginUser };
+module.exports = { registerUser, findAllUsers, loginUser, deleteUser };
